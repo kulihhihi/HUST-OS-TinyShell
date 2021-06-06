@@ -37,6 +37,8 @@ int date(char **args);
 int time_cmd(char **args);
 int pc(char **args);
 int calc(char **args);
+int runbat(char **args);
+bool cmdCheck(char **args);
 
 
 int execute(char ** args);
