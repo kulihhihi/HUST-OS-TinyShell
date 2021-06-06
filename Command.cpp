@@ -48,7 +48,7 @@ int (*activate_command[])(char **) = {
   &time_cmd,
   &pc,
   &calc,
-  &runpat	  
+  &runbat	  
 }; 
 
 /**
