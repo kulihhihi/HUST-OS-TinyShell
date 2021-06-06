@@ -30,7 +30,8 @@ const char *command[] = {
     "date",
     "time",
     "pc",
-    "calc"
+    "calc",
+    "run"
 };
 
 /* Mảng các lệnh command*/
@@ -46,7 +47,8 @@ int (*activate_command[])(char **) = {
   &date,
   &time_cmd,
   &pc,
-  &calc
+  &calc,
+  &runpat	  
 }; 
 
 /**
@@ -113,6 +115,9 @@ int help(char **args){
         printf("%-30s%s\n%-30s%s", " mkdir",
 			"Make a new directory.",
             " ", "EXAMPLES: \"mkdir[Foldername]\"\n\n");
+	printf("%-30s%s\n%-30s%s", " run",
+			"Run .bat file only.",
+            " ", "EXAMPLES: \"run [filename.bat]\"\n\n");
         printf("%-30s%s\n%-30s%s\n%-30s%s", " pc",
             "Create process.", " ",
             "You must enter the options in the 2nd argument, such as f and b",
@@ -161,6 +166,11 @@ int help(char **args){
         cout << "Recommend: Foldername contains no space." << endl;
         cout << "       mkdir [Foldername] : Make folder [Foldername] in the current directory" << endl;
         cout << "EXAMPLE: \"mkdir ABC\"" << endl;
+    }
+    else if (!strcmp(args[1], "run")){
+        cout << "Run .bat file only with commands which our shell supports" << endl;
+        cout << "       run [Filename.bat] : Run .bat file with commands which our shell supports " << endl;
+        cout << "EXAMPLE: \"run command.bat\"" << endl;
     }
     else if(!strcmp(args[1],"pc")){
         cout << "Supported options:" << endl;
@@ -573,3 +583,60 @@ int calc(char **args){
     system("calc");
     return 0;
 }
+
+
+
+//////////////////////////////////////////
+//////// Dành riêng cho file .bat ////////
+//////////////////////////////////////////
+
+/**
+ * Kiểm tra xem câu lệnh có được hỗ trợ trong shell không
+ * 
+ **/
+bool cmdCheck(char **args){
+    if (args[0] == NULL){
+        return 0;
+    }
+    for(int i=0; i < size_of_command() ; i++){
+        if(strcmp(args[0],command[i]) == 0){ /* Kiểm tra xem người dùng nhập lệnh nào trong tập lệnh */
+            return true;
+        } 
+    }
+    return false;
+}
+
+/**
+ * Chạy riêng cho file .bat  
+ * Câu lệnh: run [Filename.bat]
+ * 
+ **/
+
+int runbat(char **args){
+    char w[255],a[255];
+    char *run_file = combinePath(args, 1);
+    FILE *f=fopen(run_file,"rt");
+    if(f==NULL) {
+        printf("\nLoi doc file.\n");
+        // getch();
+        return 0;
+	}
+    else {
+        while(!feof(f)) {
+            fgets(w,255,f);
+            strcpy(a,w);
+            char **arg = separate_line(a); 
+            printf("");
+            // cout << w << endl; 
+            if(cmdCheck(arg)){
+                int stop = execute(arg); // system ???
+            }
+            else {
+                system(w);
+
+            }
+        }
+        fclose(f);
+    }
+    return 0;
+} 
